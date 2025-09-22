@@ -1,11 +1,13 @@
-package SE.BOAT.SAFARI.Registration;
+package SE.BOAT.SAFARI.BoatManagement;
+
+
 
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
-public class User {
+public class Boat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -14,12 +16,9 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(nullable = false)
+    private int capacity;
 
     @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
-    private String role = "USER"; // default role
+    private String boatType; // e.g., Luxury, Standard, Fishing, Speed
 }

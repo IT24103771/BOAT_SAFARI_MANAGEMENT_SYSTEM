@@ -1,5 +1,8 @@
 package SE.BOAT.SAFARI.Booking;
 
+import SE.BOAT.SAFARI.BoatManagement.Boat;
+import SE.BOAT.SAFARI.Schedule.TimeSlot;
+import SE.BOAT.SAFARI.Venue.Venue;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -27,7 +30,15 @@ public class Booking {
     @Column(nullable = false)
     private int passengers;
 
-    @Column(name = "boat_type")
-    private String boatType;
+    @ManyToOne
+    @JoinColumn(name = "boat_id")
+    private Boat boat; // link to Boat entity
 
+    @ManyToOne
+    @JoinColumn(name = "time_slot_id")
+    private TimeSlot timeSlot; // link to TimeSlot entity
+
+    @ManyToOne
+    @JoinColumn(name = "venue_id")
+    private Venue venue; // link to Venue entity
 }

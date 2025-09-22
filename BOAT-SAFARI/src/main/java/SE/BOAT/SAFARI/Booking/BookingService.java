@@ -12,33 +12,27 @@ import java.util.Optional;
 public class BookingService {
 
     @Autowired
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
 
-    // Save a new booking
     public Booking saveBooking(Booking booking) {
-        return (Booking) bookingRepository.save(booking);
+        return bookingRepository.save(booking);
     }
 
-    // Get bookings with optional filters (name, email, date)
-    public List<Booking> getBookings(String name, String email, String date) {
+    public List<Booking> getBookings(String name, String email, String date, String venueName) {
         Specification<Booking> spec = null;
 
-        if (name != null && !name.isEmpty()) {
-            spec = (spec == null ? nameEquals(name) : spec.and(nameEquals(name)));
-        }
-
-        if (email != null && !email.isEmpty()) {
-            spec = (spec == null ? emailEquals(email) : spec.and(emailEquals(email)));
-        }
-
-        if (date != null && !date.isEmpty()) {
-            spec = (spec == null ? dateEquals(date) : spec.and(dateEquals(date)));
-        }
+        if (name != null) spec = (spec == null ? nameEquals(name) : spec.and(nameEquals(name)));
+        if (email != null) spec = (spec == null ? emailEquals(email) : spec.and(emailEquals(email)));
+        if (date != null) spec = (spec == null ? dateEquals(date) : spec.and(dateEquals(date)));
+        if (venueName != null) spec = (spec == null ? venueEquals(venueName) : spec.and(venueEquals(venueName)));
 
         return spec == null ? bookingRepository.findAll() : bookingRepository.findAll(spec);
     }
 
-    // Update booking by ID
+    public Booking getBookingById(int id) {
+        return bookingRepository.findById(id).orElse(null);
+    }
+
     public Booking updateBooking(int id, Booking booking) {
         Optional<Booking> existingBooking = bookingRepository.findById(id);
         if (existingBooking.isPresent()) {
@@ -47,13 +41,14 @@ public class BookingService {
             b.setEmail(booking.getEmail());
             b.setSafariDate(booking.getSafariDate());
             b.setPassengers(booking.getPassengers());
-            b.setBoatType(booking.getBoatType());
-            return (Booking) bookingRepository.save(b);
+            b.setBoat(booking.getBoat());
+            b.setTimeSlot(booking.getTimeSlot());
+            b.setVenue(booking.getVenue());
+            return bookingRepository.save(b);
         }
-        return null; // or throw an exception if not found
+        return null;
     }
 
-    // Delete booking by ID
     public boolean deleteBooking(int id) {
         Optional<Booking> existingBooking = bookingRepository.findById(id);
         if (existingBooking.isPresent()) {
@@ -63,17 +58,18 @@ public class BookingService {
         return false;
     }
 
-    // Specifications for dynamic filtering
+    // Specifications for filtering
     private Specification<Booking> nameEquals(String name) {
         return (root, query, builder) -> builder.equal(root.get("name"), name);
     }
-
     private Specification<Booking> emailEquals(String email) {
         return (root, query, builder) -> builder.equal(root.get("email"), email);
     }
-
     private Specification<Booking> dateEquals(String date) {
         LocalDate localDate = LocalDate.parse(date);
         return (root, query, builder) -> builder.equal(root.get("safariDate"), localDate);
+    }
+    private Specification<Booking> venueEquals(String venueName) {
+        return (root, query, builder) -> builder.equal(root.get("venue").get("name"), venueName);
     }
 }
