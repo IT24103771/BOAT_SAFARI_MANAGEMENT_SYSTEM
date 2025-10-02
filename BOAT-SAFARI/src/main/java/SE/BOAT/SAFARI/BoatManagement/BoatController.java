@@ -43,6 +43,8 @@ public class BoatController {
                     existingBoat.setName(boatDetails.getName());
                     existingBoat.setCapacity(boatDetails.getCapacity());
                     existingBoat.setBoatType(boatDetails.getBoatType());
+                    existingBoat.setPrice(boatDetails.getPrice());
+
                     Boat updatedBoat = boatService.saveBoat(existingBoat);
                     return ResponseEntity.ok(updatedBoat);
                 })

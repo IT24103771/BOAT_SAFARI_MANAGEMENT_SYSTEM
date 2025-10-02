@@ -32,4 +32,5 @@ public class BoatService {
     public void deleteBoat(int id) {
         boatRepository.deleteById(id);
     }
+
 }

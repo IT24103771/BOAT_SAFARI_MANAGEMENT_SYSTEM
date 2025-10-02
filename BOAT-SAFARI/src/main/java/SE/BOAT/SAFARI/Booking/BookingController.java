@@ -5,9 +5,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping("/api/bookings")
+@CrossOrigin(origins = "*")
 public class BookingController {
 
     @Autowired
@@ -19,13 +20,8 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<Booking> getBookings(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String date,
-            @RequestParam(required = false) String venue
-    ) {
-        return bookingService.getBookings(name, email, date, venue);
+    public List<Booking> getBookings() {
+        return bookingService.getBookings(null, null, null, null);
     }
 
     @GetMapping("/{id}")
