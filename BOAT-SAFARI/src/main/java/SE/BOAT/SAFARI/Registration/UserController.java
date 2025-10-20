@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -18,25 +19,52 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
         User savedUser = userService.registerUser(user);
-        if (savedUser != null) {
-            return ResponseEntity.ok(savedUser);
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        return savedUser != null
+                ? ResponseEntity.ok(savedUser)
+                : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User loginUser) {
         User user = userService.login(loginUser);
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        return user != null
+                ? ResponseEntity.ok(user)
+                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping
     public List<User> getUsers() {
         return userService.getUsers();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User updatedUser) {
+        User user = userService.updateUser(id, updatedUser);
+        return user != null
+                ? ResponseEntity.ok(user)
+                : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<Void> updatePassword(
+            @PathVariable Integer id,
+            @RequestBody java.util.Map<String, String> body) {
+
+        String newPassword = body.get("password");
+        if (newPassword == null || newPassword.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        boolean updated = userService.updatePassword(id, newPassword);
+        return updated
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+        return userService.deleteUser(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }
